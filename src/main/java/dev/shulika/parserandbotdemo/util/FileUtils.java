@@ -26,9 +26,9 @@ public class FileUtils {
         if (!dir.exists()) {
             dir.mkdirs();
         }
+
         return new File(String.format("%s/%s %s.csv", siteName, siteName, dateTime));
     }
-
 
     public static final List<String> getCategoriesFromFile() throws IOException {
         String filePath = "categories.txt";

@@ -1,7 +1,6 @@
 package dev.shulika.parserandbotdemo.service;
 
 import dev.shulika.parserandbotdemo.config.ParserProperties;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -27,7 +26,7 @@ import static dev.shulika.parserandbotdemo.util.FileUtils.*;
 @Service
 @EnableAsync
 @Slf4j
-public class ParserServiceImpl implements ParserService{
+public class ParserServiceImpl implements ParserService {
 
     private final String siteName;
     private final String siteUrl;
