@@ -5,10 +5,13 @@ import org.jsoup.nodes.Document;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 public class FileUtils {
@@ -20,6 +23,11 @@ public class FileUtils {
         String dateTime = formatter.format(currentDateTime);
 
         return String.format("%s/%s %s.csv", siteName, siteName, dateTime);
+    }
+
+    public static final List<String> getCategoriesFromFile() throws IOException {
+        String filePath = "categories.txt";
+        return Files.readAllLines(Paths.get(filePath));
     }
 
     public static final Document getHtmlDocument(String url, Integer timeout) throws IOException {
