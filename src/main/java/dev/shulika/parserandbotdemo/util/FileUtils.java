@@ -16,14 +16,19 @@ import java.util.Optional;
 
 public class FileUtils {
 
-    public static final String generateFilePath(String siteName) {
+    public static final File generateFilePath(String siteName) {
 
         LocalDateTime currentDateTime = LocalDateTime.now(ZoneId.of("Europe/Moscow"));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH-mm-ss");
         String dateTime = formatter.format(currentDateTime);
 
-        return String.format("%s/%s %s.csv", siteName, siteName, dateTime);
+        File dir = new File(siteName);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        return new File(String.format("%s/%s %s.csv", siteName, siteName, dateTime));
     }
+
 
     public static final List<String> getCategoriesFromFile() throws IOException {
         String filePath = "categories.txt";
