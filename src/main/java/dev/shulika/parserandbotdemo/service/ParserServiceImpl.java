@@ -41,67 +41,65 @@ public class ParserServiceImpl implements ParserService{
     @Scheduled(cron = "${parser.task-cron}", zone = "Europe/Moscow")
     @Retryable(value = SocketTimeoutException.class, maxAttempts = 3, backoff = @Backoff(delay = 30000))
     @Override
-    public void start() throws IOException {
+    public void start() throws IOException, InterruptedException {
         log.info("+++ ParserServiceImpl :: start()");
 
         List<String> categories = getCategoriesFromFile();
-        System.out.println(categories);
-        File csvFile = new File(generateFilePath(siteName));
+        File csvFile = generateFilePath(siteName);
 
-//        try (PrintWriter printWriter = new PrintWriter(csvFile, "Cp1251")) {    // or StandardCharsets.UTF_8
-//
-//            for (String category : CATEGORIES_BIT) {
-//                log.info("+++ START PARSE CATEGORY {}{}", URL_BIT, category);
-//
-//                int pageCount = 1;
-//                String parseUrl = URL_BIT + category + pageCount;
-//                boolean isLastPage;
-//
-//                do {
-//                    log.info("~~~ Started write to file {}", parseUrl);
-//
-//                    Document doc = getHtmlDocument(parseUrl, 30000);
-//
-//                    Elements divs = doc.select("div.product-about");
-//                    for (Element div : divs) {
-//                        List<String> row = new ArrayList<>();
-//
-//                        String name = div.select("div.name > a").first().text().replace("\"", "");
-//                        String price = div.select("div.price").first().text();
-//                        String link = div.select("div.name > a").first().attr("href");
-//                        String stock = div.select("div.oct-cat-stock > span").first().text();
-//
-//                        row.add("\"" + name + "\"");
-//                        row.add("\"" + price + "\"");
-//                        row.add("\"" + link + "\"");
-//                        row.add("\"" + stock + "\"");
-//
-//                        printWriter.println(String.join(";", row));     // default delimiter "," let's use ";"
-//                        if (printWriter.checkError())
-//                            log.error("--- Some error occurred while writing to the file :: {}", parseUrl);
-//                    }
-//
-//                    Elements liElements = doc.select("div.pagination > ul > li");
-//                    if (liElements.isEmpty()) {
-//                        break;
-//                    }
-//
-//                    isLastPage = liElements.last().hasClass("active");
-//                    pageCount++;
-//                    parseUrl = URL_BIT + category + pageCount;
-//                    Thread.sleep(ThreadLocalRandom.current().nextInt(5000, 8001));
-//
-//                } while (!isLastPage);
-//
-////                printWriter.write('\ufeff');  // if UTF-8 ???
-//                printWriter.println("; ; ;");
-//                log.info("+++ FINISHED PARSE All PAGES :: CATEGORY {}{}", URL_BIT, category);
-//
-//            }
-//
-//            log.info("=== FINISHED PARSE ALL CATEGORIES :: {}", NAME_BIT);
-//
-//        }
+        try (PrintWriter printWriter = new PrintWriter(csvFile, "Cp1251")) {    // or StandardCharsets.UTF_8
+
+            for (String category : categories) {
+                log.info("+++ START PARSE CATEGORY {}{}", siteUrl, category);
+
+                String parseUrl = siteUrl + category;
+                Elements nextElements;
+
+                do {
+                    log.info("~~~ Started write to file {}", parseUrl);
+
+                    Document doc = getHtmlDocument(parseUrl, 30000);
+
+                    Elements divs = doc.select("div.product-container");
+                    for (Element div : divs) {
+                        List<String> row = new ArrayList<>();
+
+                        String name = div.select("div.right-block > h5 > a").first().text().replace("\"", "");
+                        String price = div.select("div.right-block > div.content_price > span").first().text();
+                        String link = div.select("div.right-block > h5 > a").first().attr("href");
+                        Elements spanStock = div.select("div.right-block > span > span");
+                        String stock = spanStock.isEmpty() ? "-" : spanStock.first().text();
+
+                        row.add("\"" + name + "\"");
+                        row.add("\"" + price + "\"");
+                        row.add("\"" + link + "\"");
+                        row.add("\"" + stock + "\"");
+
+                        printWriter.println(String.join(";", row));     // default delimiter "," let's use ";"
+                        if (printWriter.checkError())
+                            log.error("--- Some error occurred while writing to the file :: {}", parseUrl);
+                    }
+
+                    nextElements = doc.select("li.pagination_next > a");
+                    if (nextElements.isEmpty()) {
+                        break;
+                    }
+
+                    parseUrl = siteUrl + nextElements.first().attr("href");
+                    System.out.println("---- NEXT = " + parseUrl);
+                    Thread.sleep(ThreadLocalRandom.current().nextInt(5000, 7001));
+
+                } while (!nextElements.isEmpty());
+
+//                printWriter.write('\ufeff');  // if UTF-8 ???
+                printWriter.println("; ; ;");
+                log.info("+++ FINISHED PARSE All PAGES :: CATEGORY {}{}", siteUrl, category);
+
+            }
+
+            log.info("=== FINISHED PARSE ALL CATEGORIES :: {}", siteName);
+
+        }
 
     }
 
