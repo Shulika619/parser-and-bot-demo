@@ -9,6 +9,9 @@ parser:
   site-name: ${SITE_NAME}
   site-url: ${SITE_URL}
   task-cron: ${TASK_CRON}
+  bot-name: ${BOT_NAME}
+  bot-token: ${BOT_TOKEN}
+  admin-chat-id: ${ADMIN_CHAT_ID}
 
 logging:
   level:

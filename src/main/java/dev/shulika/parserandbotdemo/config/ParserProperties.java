@@ -21,4 +21,13 @@ public class ParserProperties {
     @Value("${parser.task-cron}")
     private String taskCron;
 
+    @Value("${parser.bot-name}")
+    private String botName;
+
+    @Value("${parser.bot-token}")
+    private String botToken;
+
+    @Value("${parser.admin-chat-id}")
+    private String adminChatId;
+
 }
