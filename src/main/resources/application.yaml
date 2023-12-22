@@ -1,1 +1,20 @@
+server:
+  port: 8081
 
+spring:
+  config:
+    import: optional:file:.env[.properties]
+
+parser:
+  site-name: ${SITE_NAME}
+  site-url: ${SITE_URL}
+  task-cron: ${TASK_CRON}
+
+logging:
+  level:
+    root: INFO
+    org.springframework: ERROR
+    dev.shulika.parserandbotdemo: INFO
+  file:
+    path: './'
+    name: ${logging.file.path}/parser-and-bot-demo.log
