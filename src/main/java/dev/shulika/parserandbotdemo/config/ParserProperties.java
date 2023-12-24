@@ -28,6 +28,6 @@ public class ParserProperties {
     private String botToken;
 
     @Value("${parser.admin-chat-id}")
-    private String adminChatId;
+    private Long adminChatId;
 
 }

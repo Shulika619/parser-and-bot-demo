@@ -90,7 +90,6 @@ public class ParserServiceImpl implements ParserService {
 
                 } while (!nextElements.isEmpty());
 
-//                printWriter.write('\ufeff');  // if UTF-8 ???
                 printWriter.println("; ; ;");
                 log.info("+++ FINISHED PARSE All PAGES :: CATEGORY {}{}", siteUrl, category);
 
